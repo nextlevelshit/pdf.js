@@ -893,6 +893,11 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
   content: url(images/toolbarButton-zoomIn.png);
 }
 
+.toolbarButton.saveSelection::before,
+.secondaryToolbarButton.saveSelection::before {
+  content: url(images/toolbarButton-saveSelection.png);
+}
+
 .toolbarButton.presentationMode::before,
 .secondaryToolbarButton.presentationMode::before {
   content: url(images/toolbarButton-presentationMode.png);
@@ -1668,9 +1673,14 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     content: url(images/toolbarButton-zoomOut@2x.png);
   }
 
+  .toolbarButton.saveSelection::before,
+  .secondaryToolbarButton.saveSelection::before {
+    content: url(images/toolbarButton-saveSelection@2x.png);
+  }
+
   .toolbarButton.presentationMode::before,
   .secondaryToolbarButton.presentationMode::before {
-    content: url(images/toolbarButton-presentationMode@2x.png);
+    content: url(images/toolbarButton-saveSelection@2x.png);
   }
 
   .toolbarButton.print::before,

@@ -1,0 +1,18 @@
+/*
+ * Hiding elements
+ */
+
+#secondaryToolbarToggle,
+#toolbarPreviousNext,
+#download,
+#viewBookmark,
+#secondaryToolbarToggle,
+#secondaryToolbarToggleSeparator {
+    display: none !important;
+}
+
+/*
+ * Highlighting elements
+ */
+::selection { background: #FF9 !important; }
+::-moz-selection { background: #FF9 !important; }

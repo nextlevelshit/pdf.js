@@ -40,6 +40,7 @@ See https://github.com/adobe-type-tools/cmap-resources
 <!--#endif-->
 
     <link rel="stylesheet" href="viewer.css"/>
+    <link rel="stylesheet" href="viewer-adjustments.css"/>
 <!--#if !PRODUCTION-->
     <link rel="resource" type="application/l10n" href="locale/locale.properties"/>
 <!--#endif-->
@@ -54,6 +55,7 @@ See https://github.com/adobe-type-tools/cmap-resources
 
 <!--#if !PRODUCTION-->
     <script src="../node_modules/requirejs/require.js"></script>
+    <!--<script src="../node_modules/rangy/lib/rangy-core.js"></script>-->
 <!--#endif-->
 
 <!--#if (GENERIC && !MINIFIED) -->
@@ -86,6 +88,7 @@ See https://github.com/adobe-type-tools/cmap-resources
     <script src="overlay_manager.js"></script>
     <script src="password_prompt.js"></script>
     <script src="pdf_document_properties.js"></script>
+    <script src="pdf_highlight.js"></script>
 <!--#endif-->
 
 <!--#if !MINIFIED -->
@@ -99,7 +102,6 @@ See https://github.com/adobe-type-tools/cmap-resources
 
   <body tabindex="1" class="loadingInProgress">
     <div id="outerContainer">
-
       <div id="sidebarContainer">
         <div id="toolbarSidebar">
           <div class="splitToolbarButton toggled">
@@ -210,7 +212,7 @@ See https://github.com/adobe-type-tools/cmap-resources
                 <button id="viewFind" class="toolbarButton group hiddenSmallView" title="Find in Document" tabindex="12" data-l10n-id="findbar">
                    <span data-l10n-id="findbar_label">Find</span>
                 </button>
-                <div class="splitToolbarButton">
+                <div class="splitToolbarButton" id="toolbarPreviousNext">
                   <button class="toolbarButton pageUp" title="Previous Page" id="previous" tabindex="13" data-l10n-id="previous">
                     <span data-l10n-id="previous_label">Previous</span>
                   </button>
@@ -224,6 +226,10 @@ See https://github.com/adobe-type-tools/cmap-resources
                 <span id="numPages" class="toolbarLabel"></span>
               </div>
               <div id="toolbarViewerRight">
+                <button id="saveSelection" class="toolbarButton saveSelection hiddenLargeView" title="Save selected text" tabindex="30" data-l10n-id="save_selection">
+                  <span data-l10n-id="save_selection_label">Save Selection</span>
+                </button>
+
                 <button id="presentationMode" class="toolbarButton presentationMode hiddenLargeView" title="Switch to Presentation Mode" tabindex="31" data-l10n-id="presentation_mode">
                   <span data-l10n-id="presentation_mode_label">Presentation Mode</span>
                 </button>
@@ -243,7 +249,7 @@ See https://github.com/adobe-type-tools/cmap-resources
                   <span data-l10n-id="bookmark_label">Current View</span>
                 </a>
 
-                <div class="verticalToolbarSeparator hiddenSmallView"></div>
+                <div id="secondaryToolbarToggleSeparator" class="verticalToolbarSeparator hiddenSmallView"></div>
 
                 <button id="secondaryToolbarToggle" class="toolbarButton" title="Tools" tabindex="36" data-l10n-id="tools">
                   <span data-l10n-id="tools_label">Tools</span>
@@ -395,5 +401,12 @@ See https://github.com/adobe-type-tools/cmap-resources
 <!--#if !(FIREFOX || MOZCENTRAL)-->
 <!--#include viewer-snippet-mozPrintCallback-polyfill.html-->
 <!--#endif-->
+    <script>
+      define(['../node_modules/rangy/lib/rangy-core'], function (rangy) {
+        alert('nothing');
+        window.rangy = rangy;
+        return rangy;
+      });
+    </script>
   </body>
 </html>

@@ -118,6 +118,7 @@ var PDFViewerApplication = {
   preferenceDefaultZoomValue: '',
   isViewerEmbedded: (window.parent !== window),
   url: '',
+  rangy: '',
 
   // called once when the document is loaded
   initialize: function pdfViewInitialize() {
@@ -673,6 +674,46 @@ var PDFViewerApplication = {
       },
       downloadByUrl // Error occurred try downloading with just the url.
     ).then(null, downloadByUrl);
+  },
+
+  saveSelection: function pdfViewSaveSelection() {
+    console.log('Clicked on Save Selection');
+
+    function getSelectionText() {
+      var text = "";
+      if (window.getSelection) {
+        text = window.getSelection().toString();
+      } else if (document.selection && document.selection.type != "Control") {
+        text = document.selection.createRange().text  ;
+      }
+      return text;
+    }
+
+    function getSelectionHtml () {
+      var range;
+      if (document.selection && document.selection.createRange) {
+        range = document.selection.createRange();
+        return range.htmlText;
+      } else if (window.getSelection) {
+        var selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          range = selection.getRangeAt(0);
+          var clonedSelection = range.cloneContents();
+          var div = document.createElement('div');
+          div.appendChild(clonedSelection);
+          return div.innerHTML;
+        }
+        else {
+          return '';
+        }
+      }
+      else {
+        return '';
+      }
+    }
+
+    console.log('Text', getSelectionText());
+    //console.log('HTML', getSelectionHtml());
   },
 
   fallback: function pdfViewFallback(featureId) {
@@ -1363,6 +1404,30 @@ function validateFileURL(file) {
 }
 //#endif
 
+function rangyLoad() {
+  console.log('Loading rangy...');
+
+  var rangyBundle = {
+    'rangy-core': '../node_modules/rangy/lib/rangy-core',
+    'rangy-classapplier': '../node_modules/rangy/lib/rangy-classapplier',
+    'rangy-highlighter': '../node_modules/rangy/lib/rangy-highlighter',
+    'rangy-selectionsaverestore': '../node_modules/rangy/lib/rangy-selectionsaverestore',
+    'rangy-serializer': '../node_modules/rangy/lib/rangy-serializer',
+    'rangy-textrange': '../node_modules/rangy/lib/rangy-textrange'
+  };
+
+  require.config({
+    paths: rangyBundle
+  });
+
+  require(Object.keys(rangyBundle), function (rangy) {
+    window.rangy = rangy;
+    return rangy;
+  });
+
+  rangy.init();
+}
+
 function webViewerLoad(evt) {
 //#if !PRODUCTION
   require.config({paths: {'pdfjs': '../src'}});
@@ -1600,6 +1665,9 @@ function webViewerInitialized() {
     PDFViewerApplication.pdfViewer.currentScaleValue = this.value;
   });
 
+  document.getElementById('saveSelection').addEventListener('click',
+      SecondaryToolbar.saveSelectionClick.bind(SecondaryToolbar));
+
   document.getElementById('presentationMode').addEventListener('click',
     SecondaryToolbar.presentationModeClick.bind(SecondaryToolbar));
 
@@ -1651,6 +1719,7 @@ function webViewerInitialized() {
 }
 
 document.addEventListener('DOMContentLoaded', webViewerLoad, true);
+document.addEventListener('DOMContentLoaded', rangyLoad, true);
 
 document.addEventListener('pagerendered', function (e) {
   var pageNumber = e.detail.pageNumber;

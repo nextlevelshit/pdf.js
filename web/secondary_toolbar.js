@@ -67,6 +67,11 @@ var SecondaryToolbar = {
   },
 
   // Event handling functions.
+  saveSelectionClick: function secondaryToolbarSaveSelectionClick(evt) {
+    PDFViewerApplication.saveSelection();
+    this.close();
+  },
+
   presentationModeClick: function secondaryToolbarPresentationModeClick(evt) {
     PDFViewerApplication.requestPresentationMode();
     this.close();
