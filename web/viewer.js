@@ -119,6 +119,7 @@ var PDFViewerApplication = {
   isViewerEmbedded: (window.parent !== window),
   url: '',
   rangy: '',
+  rangyClassApplier: '',
 
   // called once when the document is loaded
   initialize: function pdfViewInitialize() {
@@ -678,42 +679,8 @@ var PDFViewerApplication = {
 
   saveSelection: function pdfViewSaveSelection() {
     console.log('Clicked on Save Selection');
-
-    function getSelectionText() {
-      var text = "";
-      if (window.getSelection) {
-        text = window.getSelection().toString();
-      } else if (document.selection && document.selection.type != "Control") {
-        text = document.selection.createRange().text  ;
-      }
-      return text;
-    }
-
-    function getSelectionHtml () {
-      var range;
-      if (document.selection && document.selection.createRange) {
-        range = document.selection.createRange();
-        return range.htmlText;
-      } else if (window.getSelection) {
-        var selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          range = selection.getRangeAt(0);
-          var clonedSelection = range.cloneContents();
-          var div = document.createElement('div');
-          div.appendChild(clonedSelection);
-          return div.innerHTML;
-        }
-        else {
-          return '';
-        }
-      }
-      else {
-        return '';
-      }
-    }
-
-    console.log('Text', getSelectionText());
-    //console.log('HTML', getSelectionHtml());
+    PDFViewerApplication.rangyClassApplier = rangy.createClassApplier('highlight');
+    PDFViewerApplication.rangyClassApplier.toggleSelection();
   },
 
   fallback: function pdfViewFallback(featureId) {

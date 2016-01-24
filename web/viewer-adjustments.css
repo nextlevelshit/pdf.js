@@ -14,5 +14,9 @@
 /*
  * Highlighting elements
  */
-::selection { background: #FF9 !important; }
-::-moz-selection { background: #FF9 !important; }
+::selection { background: #FF3 !important; }
+::-moz-selection { background: #FF3 !important; }
+
+.highlight {
+    background: #FF3 !important;
+}
