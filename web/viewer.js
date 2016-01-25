@@ -679,7 +679,28 @@ var PDFViewerApplication = {
 
   saveSelection: function pdfViewSaveSelection() {
     console.log('Clicked on Save Selection');
-    PDFViewerApplication.rangyClassApplier = rangy.createClassApplier('highlight');
+
+    function generateRandKey() {
+      return Math.floor(Math.random() * Math.pow(10, 10));
+    }
+
+    var highlightId = 'highlight_' + generateRandKey();
+
+    PDFViewerApplication.rangyClassApplier = rangy.createClassApplier('highlight', {
+      onElementCreate: function(el) {
+        el.className = [el.className, highlightId].join(' ');
+
+        el.addEventListener('click', function(){
+          var allSelectedNodes = document.querySelectorAll('.' + highlightId);
+          Array.prototype.forEach.call(allSelectedNodes, function( childNode ){
+            // Remove for children the selection class
+            childNode.className = '';
+            // TODO: Destroy Selection instead of removing class
+          });
+        });
+      }
+    });
+
     PDFViewerApplication.rangyClassApplier.toggleSelection();
   },
 
