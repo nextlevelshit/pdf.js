@@ -684,18 +684,43 @@ var PDFViewerApplication = {
       return Math.floor(Math.random() * Math.pow(10, 10));
     }
 
+    function getAllHighlightedNodes() {
+      return document.querySelectorAll('.' + highlightId);
+    }
+
+    function getHighlightedNode() {
+      return document.querySelector('.' + highlightId);
+    }
+
     var highlightId = 'highlight_' + generateRandKey();
 
     PDFViewerApplication.rangyClassApplier = rangy.createClassApplier('highlight', {
       onElementCreate: function(el) {
         el.className = [el.className, highlightId].join(' ');
 
+        /*
+         * Destroy range on click event
+         */
         el.addEventListener('click', function(){
-          var allSelectedNodes = document.querySelectorAll('.' + highlightId);
+          console.log('Clicked on', el);
+          var allSelectedNodes = getAllHighlightedNodes();
           Array.prototype.forEach.call(allSelectedNodes, function( childNode ){
             // Remove for children the selection class
-            childNode.className = '';
+            // childNode.className = '';
             // TODO: Destroy Selection instead of removing class
+          });
+        });
+        /*
+         * Highlight effect on hover event
+         */
+        el.addEventListener('mouseover', function(){
+          Array.prototype.forEach.call(getAllHighlightedNodes(), function( childNode ){
+            childNode.classList.toggle('hovered');
+          });
+        });
+        el.addEventListener('mouseout', function(){
+          Array.prototype.forEach.call(getAllHighlightedNodes(), function( childNode ){
+            childNode.classList.toggle('hovered');
           });
         });
       }

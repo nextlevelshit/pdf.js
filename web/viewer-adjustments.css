@@ -11,13 +11,24 @@
     display: none !important;
 }
 
+.textLayer {
+    opacity: 1;
+}
+
 /*
  * Highlighting elements
  */
-::selection { background: #FF3 !important; }
-::-moz-selection { background: #FF3 !important; }
+::selection { background: rgba(255,255,51,0.3) !important; }
+::-moz-selection { background: rgba(255,255,51,0.3) !important; }
 
 .highlight {
-    background: #FF3 !important;
+    background: rgba(255,255,51,0.3) !important;
+    box-shadow: 0 0 10px rgba(255,255,51,0.3);
+    border-radius: 10px !important;
     cursor: pointer;
+}
+
+.highlight.hovered {
+    opacity: 0.6;
+    box-shadow: 0 0 3px rgba(255,255,51,0.7);
 }
