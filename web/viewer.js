@@ -120,6 +120,9 @@ var PDFViewerApplication = {
   url: '',
   rangy: '',
   rangyClassApplier: '',
+  rangyHighlighter: '',
+  rangyHighlightClass: 'highlight',
+  rangyInitialized: false,
 
   // called once when the document is loaded
   initialize: function pdfViewInitialize() {
@@ -678,55 +681,8 @@ var PDFViewerApplication = {
   },
 
   saveSelection: function pdfViewSaveSelection() {
-    console.log('Clicked on Save Selection');
-
-    function generateRandKey() {
-      return Math.floor(Math.random() * Math.pow(10, 10));
-    }
-
-    function getAllHighlightedNodes() {
-      return document.querySelectorAll('.' + highlightId);
-    }
-
-    function getHighlightedNode() {
-      return document.querySelector('.' + highlightId);
-    }
-
-    var highlightId = 'highlight_' + generateRandKey();
-
-    PDFViewerApplication.rangyClassApplier = rangy.createClassApplier('highlight', {
-      onElementCreate: function(el) {
-        el.className = [el.className, highlightId].join(' ');
-
-        /*
-         * Destroy range on click event
-         */
-        el.addEventListener('click', function(){
-          console.log('Clicked on', el);
-          var allSelectedNodes = getAllHighlightedNodes();
-          Array.prototype.forEach.call(allSelectedNodes, function( childNode ){
-            // Remove for children the selection class
-            // childNode.className = '';
-            // TODO: Destroy Selection instead of removing class
-          });
-        });
-        /*
-         * Highlight effect on hover event
-         */
-        el.addEventListener('mouseover', function(){
-          Array.prototype.forEach.call(getAllHighlightedNodes(), function( childNode ){
-            childNode.classList.toggle('hovered');
-          });
-        });
-        el.addEventListener('mouseout', function(){
-          Array.prototype.forEach.call(getAllHighlightedNodes(), function( childNode ){
-            childNode.classList.toggle('hovered');
-          });
-        });
-      }
-    });
-
-    PDFViewerApplication.rangyClassApplier.toggleSelection();
+    if(!PDFViewerApplication.rangyInitialized) rangyInit();
+    PDFViewerApplication.rangyHighlighter.highlightSelection(PDFViewerApplication.rangyHighlightClass);
   },
 
   fallback: function pdfViewFallback(featureId) {
@@ -1418,7 +1374,7 @@ function validateFileURL(file) {
 //#endif
 
 function rangyLoad() {
-  console.log('Loading rangy...');
+  console.log('Loading rangy ...');
 
   var rangyBundle = {
     'rangy-core': '../node_modules/rangy/lib/rangy-core',
@@ -1437,8 +1393,62 @@ function rangyLoad() {
     window.rangy = rangy;
     return rangy;
   });
+}
 
-  rangy.init();
+/*
+ * Highlight and de-highlight text
+ */
+
+function rangyInit() {
+  var highlightClass = PDFViewerApplication.rangyHighlightClass;
+  var highlightId = 'highlight_' + generateRandKey();
+
+  PDFViewerApplication.rangyHighlighter = rangy.createHighlighter();
+
+  PDFViewerApplication.rangyHighlighter.addClassApplier(rangy.createClassApplier(highlightClass, {
+    ignoreWhiteSpace: true,
+    onElementCreate: function(el) {
+      el.className = [el.className, highlightId].join(' ');
+      /*
+       * Destroy range on click event
+       */
+      el.addEventListener('click', function() {
+        var highlightedText = PDFViewerApplication.rangyHighlighter.getHighlightForElement(this);
+
+        console.log('Clicked on highlighted text', highlightedText);
+
+        PDFViewerApplication.rangyHighlighter.removeHighlights( [highlightedText] );
+        return false;
+      });
+      /*
+       * Highlight effect on hover event
+       */
+      el.addEventListener('mouseover', function(){
+        toggleHoverEffect();
+      });
+      el.addEventListener('mouseout', function(){
+        toggleHoverEffect();
+      });
+    }
+  }));
+  /*
+   * Helper functions
+   */
+  function generateRandKey() {
+    return Math.floor(Math.random() * Math.pow(10, 10));
+  }
+
+  function getAllHighlightedNodes() {
+    return document.querySelectorAll('.' + highlightId);
+  }
+
+  function toggleHoverEffect() {
+    Array.prototype.forEach.call(getAllHighlightedNodes(), function( childNode ){
+      childNode.classList.toggle('hovered');
+    });
+  }
+
+  PDFViewerApplication.rangyInitialized = true;
 }
 
 function webViewerLoad(evt) {
@@ -1731,8 +1741,10 @@ function webViewerInitialized() {
 //#endif
 }
 
-document.addEventListener('DOMContentLoaded', webViewerLoad, true);
-document.addEventListener('DOMContentLoaded', rangyLoad, true);
+document.addEventListener('DOMContentLoaded', function(){
+  webViewerLoad();
+  rangyLoad();
+}, true);
 
 document.addEventListener('pagerendered', function (e) {
   var pageNumber = e.detail.pageNumber;

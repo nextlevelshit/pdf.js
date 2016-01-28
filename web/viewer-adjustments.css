@@ -14,7 +14,6 @@
 .textLayer {
     opacity: 1;
 }
-
 /*
  * Highlighting elements
  */
@@ -26,7 +25,7 @@
     box-shadow: 0 0 10px rgba(255,255,51,0.3);
     border-radius: 10px !important;
     cursor: pointer;
-    transition: all 300ms ease-out;
+    transition: all 200ms ease-out;
 }
 
 .highlight.hovered {
